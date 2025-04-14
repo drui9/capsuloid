@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<input type="text" placeholder="Search" name="q" hx-get="/search" hx-trigger="keyup changed delay:500ms" hx-target="#results">
+<table>
+    <thead>
+        <th>No.</th>
+        <th>Artist</th>
+    </thead>
+    <tbody id='results'></tbody>
+</table>
+{% endblock content %}

@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "npx tailwindcss -i ./app/static/css/index.css -o ./app/static/css/main.css --watch",
+    "deploy": "npx tailwindcss -i ./app/static/css/index.css -o ./app/static/css/main.css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17",
+    "tailwindcss-motion": "^1.1.0"
+  }
+}
