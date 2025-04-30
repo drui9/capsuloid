@@ -1,12 +1,37 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<input type="text" placeholder="Search" name="q" hx-get="/search" hx-trigger="keyup changed delay:500ms" hx-target="#results">
-<table>
-    <thead>
-        <th>No.</th>
-        <th>Artist</th>
-    </thead>
-    <tbody id='results'></tbody>
-</table>
+<div class="relative flex justify-center items-center bg-accent bg-opacity-20 h-screen w-screen">
+    {% if form %}
+    <form action="/" method="post" class="space-y-4 w-[70%]">
+        <h1 class="font-bold text-3xl text-secondary">Mail to the future!</h1>
+        {{ form.csrf_token }}
+        <div>
+            {{ form.timestamp(class="rounded-lg p-2", placeholder="date") }}
+        </div>
+        <div>
+            {{ form.email(class="rounded-lg p-2", placeholder="example@mail.com") }}
+        </div>
+        <div>
+            {{ form.subject(class="rounded-lg p-2", placeholder="subject") }}
+        </div>
+        <div>
+            {{ form.body(class="rounded-lg p-2 w-full", placeholder="Message body") }}
+        </div>
+        {{ form.submit(class="text-white font-bold rounded-lg px-5 py-3 bg-secondary active:motion-preset-pop duration-75") }}
+    </form>
+    {% else %}
+        <p class="text-white">No form!</p>
+    {% endif %}
+    <div class="fixed bg-secondary right-0 bottom-0 rounded-lg m-4">
+        <div class="p-4 pb-0 font-bold text-white border-b border-white">
+            <i class="fa fa-bell px-2"></i>
+            Notifications
+        </div>
+        {% for message in get_flashed_messages() %}
+            <p class="px-4 mb-2 text-white font-bold"># {{ message }}</p>
+        {% endfor %}
+    </div>
+</div>
+
 {% endblock content %}
