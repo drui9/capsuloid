@@ -1,0 +1,24 @@
+services:
+  sched:
+    build: scheduler 
+    environment:
+      WEBAPP_URI: 'http://webapp'
+      SECRET_KEY: 's3cret1ve'
+    volumes:
+      - ./sched:/var/www/scheduler
+    # restart: always
+
+  # web
+  webapp:
+    build: .
+    depends_on:
+      - sched
+    ports:
+      - 8000
+    environment:
+      SECRET_KEY: 's3cret1ve'
+      DATABASE_URI: "sqlite:///session.db"
+    volumes:
+      - .:/var/www/capsule
+    # restart: always
+

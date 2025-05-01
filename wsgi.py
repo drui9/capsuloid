@@ -1,5 +1,4 @@
 import os
-import secrets
 from flask import (
     flash,
     Flask,
@@ -29,7 +28,7 @@ class MailTo(FlaskForm):
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI','sqlite:///:memory:')
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TLS'] = False
@@ -39,7 +38,7 @@ app.config['MAIL_PASSWORD'] = 'tqieqfqngfgqdrpn'
 app.config['MAIL_DEFAULT_SENDER'] = 'ngaira14nelson@gmail.com'
 
 # configuration
-app.config['SECRET_KEY'] = secrets.token_hex(16).upper()
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY','s3cret1ve')
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
 
 # configuration
@@ -68,10 +67,11 @@ class Model:
 #</>
 class EmailModel(Model, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    due_date = db.Column(db.DateTime, default=datetime.now)
     email_addr = db.Column(db.String(256), nullable=False)
     subject = db.Column(db.String(256), nullable=False)
     body = db.Column(db.String(1024), nullable=False)
-    due_date = db.Column(db.DateTime, default=datetime.now)
+    done = db.Column(db.Boolean, default=False)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -89,17 +89,32 @@ def index():
                 flash("Mail scheduling failed!")
     return render_template('index.html', form=form)
 
+@app.route('/list')
+def list_mails():
+    if api_key := request.headers.get('Api-key'):
+        if api_key == app.config['SECRET_KEY']:
+            mails = EmailModel.query.all()
+            return {
+                'ok': True,
+                'scheduled': [
+                    {i.id: i.due_date.timestamp()} for i in mails
+                ]
+            }
+    return {'ok': False}, 401
+
 @app.route('/send')
 def send_email():
     mail_id = request.args.get('id')
     print('Sending mail:', mail_id)
-    if email := EmailModel.query.get(mail_id):
+    if (email := EmailModel.query.get(mail_id)) and (not email.done):
         msg = Message(
             email.subject,
             recipients=[email.email_addr],
             html=render_template_string(template_str, title=email.subject, body=email.body)
         )
         mail.send(msg)
+        email.done = True
+        email.save()
         return {'ok': True}
     return {'ok': False}
 

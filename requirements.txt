@@ -1,4 +1,5 @@
 flask
+gunicorn
 flask-wtf
 flask-mail
 python-dotenv
