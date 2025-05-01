@@ -988,24 +988,16 @@ video {
   position: relative;
 }
 
-.right-0 {
-  right: 0px;
-}
-
-.top-0 {
-  top: 0px;
-}
-
 .bottom-0 {
   bottom: 0px;
 }
 
-.m-4 {
-  margin: 1rem;
+.right-0 {
+  right: 0px;
 }
 
-.mb-4 {
-  margin-bottom: 1rem;
+.m-4 {
+  margin: 1rem;
 }
 
 .mb-2 {
@@ -1024,16 +1016,16 @@ video {
   height: 100vh;
 }
 
-.w-screen {
-  width: 100vw;
+.w-\[70\%\] {
+  width: 70%;
 }
 
 .w-full {
   width: 100%;
 }
 
-.w-\[70\%\] {
-  width: 70%;
+.w-screen {
+  width: 100vw;
 }
 
 .items-center {
@@ -1054,17 +1046,8 @@ video {
   border-radius: 0.5rem;
 }
 
-.border {
-  border-width: 1px;
-}
-
 .border-b {
   border-bottom-width: 1px;
-}
-
-.border-primary {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 205 171 / var(--tw-border-opacity, 1));
 }
 
 .border-white {
@@ -1075,11 +1058,6 @@ video {
 .bg-accent {
   --tw-bg-opacity: 1;
   background-color: rgb(93 93 90 / var(--tw-bg-opacity, 1));
-}
-
-.bg-primary {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 205 171 / var(--tw-bg-opacity, 1));
 }
 
 .bg-secondary {
@@ -1099,12 +1077,14 @@ video {
   padding: 1rem;
 }
 
-.p-8 {
-  padding: 2rem;
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
-.p-1 {
-  padding: 0.25rem;
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .px-5 {
@@ -1117,36 +1097,8 @@ video {
   padding-bottom: 0.75rem;
 }
 
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.px-2 {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-}
-
-.px-1 {
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-}
-
 .pb-0 {
   padding-bottom: 0px;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.font-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-.text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
 }
 
 .text-3xl {
@@ -1158,34 +1110,18 @@ video {
   font-weight: 700;
 }
 
-.text-white {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
 .text-secondary {
   --tw-text-opacity: 1;
   color: rgb(255 164 92 / var(--tw-text-opacity, 1));
 }
 
-.text-primary {
+.text-white {
   --tw-text-opacity: 1;
-  color: rgb(255 205 171 / var(--tw-text-opacity, 1));
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
 .duration-75 {
   transition-duration: 75ms;
-}
-
-.active\:motion-preset-bounce:active {
-  --motion-duration: 300ms;
-  --motion-translate-timing: var(--motion-bounce);
-  --motion-translate-perceptual-duration-multiplier: 2;
-  --motion-origin-opacity: 0;
-  --motion-origin-translate-y: -25%;
-  --motion-opacity-in-animation: motion-opacity-in calc(var(--motion-opacity-duration) * var(--motion-opacity-perceptual-duration-multiplier)) var(--motion-opacity-timing) var(--motion-opacity-delay) both;
-  --motion-translate-in-animation: motion-translate-in calc(var(--motion-translate-duration) * var(--motion-translate-perceptual-duration-multiplier)) var(--motion-translate-timing) var(--motion-translate-delay) both;
-  animation: var(--motion-all-loop-and-enter-animations);
 }
 
 .active\:motion-preset-pop:active {
@@ -1197,22 +1133,4 @@ video {
   --motion-opacity-in-animation: motion-opacity-in calc(var(--motion-opacity-duration) * var(--motion-opacity-perceptual-duration-multiplier)) var(--motion-opacity-timing) var(--motion-opacity-delay) both;
   --motion-scale-in-animation: motion-scale-in calc(var(--motion-scale-duration) * var(--motion-scale-perceptual-duration-multiplier)) var(--motion-scale-timing) var(--motion-scale-delay) both;
   animation: var(--motion-all-loop-and-enter-animations);
-}
-
-.active\:motion-preset-pulse:active {
-  --motion-loop-scale-x: 1.25;
-  --motion-loop-scale-y: 1.25;
-  --motion-timing: cubic-bezier(0.4, 0, 0.2, 1);
-  --motion-scale-loop-animation: motion-scale-loop-mirror calc(var(--motion-scale-duration) * var(--motion-scale-perceptual-duration-multiplier)) var(--motion-scale-timing) var(--motion-scale-delay) both var(--motion-scale-loop-count);
-  animation: var(--motion-all-loop-and-enter-animations);
-}
-
-.hover\:bg-secondary:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 164 92 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:text-white:hover {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }

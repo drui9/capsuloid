@@ -7,6 +7,7 @@ from flask import (
     render_template
 )
 from flask_wtf import FlaskForm
+from flask_mail import Mail, Message
 from wtforms.validators import Email, DataRequired
 from wtforms import (
     EmailField,
@@ -25,9 +26,20 @@ class MailTo(FlaskForm):
 
 app = Flask(__name__)
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'ngaira14nelson@gmail.com'
+app.config['MAIL_PASSWORD'] = 'tqie qfqn gfgq drpn '
+app.config['MAIL_DEFAULT_SENDER'] = 'ngaira14nelson@gmail.com'
+
 # configuration
 app.config['SECRET_KEY'] = secrets.token_hex(16).upper()
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
+
+# configuration
+mail = Mail(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -38,6 +50,12 @@ def index():
             subject = form.subject.data
             body = form.body.data
             # todo: schedule mail
+            msg = Message(
+              subject,
+              recipients=[email],
+              body=body
+            )
+            mail.send(msg)
             flash("Mail sent!")
     return render_template('index.html', form=form)
 
