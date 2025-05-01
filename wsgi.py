@@ -4,8 +4,10 @@ from flask import (
     flash,
     Flask,
     request,
-    render_template
+    render_template,
+    render_template_string
 )
+from datetime import datetime
 from flask_wtf import FlaskForm
 from flask_mail import Mail, Message
 from wtforms.validators import Email, DataRequired
@@ -16,6 +18,7 @@ from wtforms import (
     SubmitField,
     DateField
 )
+from flask_sqlalchemy import SQLAlchemy
 
 class MailTo(FlaskForm):
     timestamp = DateField('Future time', validators=[DataRequired()])
@@ -26,12 +29,13 @@ class MailTo(FlaskForm):
 
 app = Flask(__name__)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'ngaira14nelson@gmail.com'
-app.config['MAIL_PASSWORD'] = 'tqie qfqn gfgq drpn '
+app.config['MAIL_PASSWORD'] = 'tqieqfqngfgqdrpn'
 app.config['MAIL_DEFAULT_SENDER'] = 'ngaira14nelson@gmail.com'
 
 # configuration
@@ -40,28 +44,65 @@ app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
 
 # configuration
 mail = Mail(app)
+db = SQLAlchemy(app)
+# ------------------
+template_str = '''
+<h1> {{ title }} </h1>
+
+<p>{{ body }} </p>
+'''
+# ***
+autofill_tpl = '''
+'''
+# <>---------------
+class Model:
+    def save(self):
+        try:
+            db.session.add(self)
+            db.session.commit()
+            return True
+        except Exception as e:
+            print('Exception', e)
+            db.session.rollback()
+        return False
+#</>
+class EmailModel(Model, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email_addr = db.Column(db.String(256), nullable=False)
+    subject = db.Column(db.String(256), nullable=False)
+    body = db.Column(db.String(1024), nullable=False)
+    due_date = db.Column(db.DateTime, default=datetime.now)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = MailTo()
     if request.method == 'POST':
         if form.validate_on_submit():
-            email = form.email.data
-            subject = form.subject.data
-            body = form.body.data
-            # todo: schedule mail
-            msg = Message(
-              subject,
-              recipients=[email],
-              body=body
-            )
-            mail.send(msg)
-            flash("Mail sent!")
+            email = EmailModel()
+            email.email_addr = form.email.data
+            email.subject = form.subject.data
+            email.body = form.body.data
+            email.due_date = form.timestamp.data
+            if email.save():
+                flash("Mail scheduled.")
+            else:
+                flash("Mail scheduling failed!")
     return render_template('index.html', form=form)
 
-if __name__ == '__main__':
-    dl_folder = app.config['UPLOAD_FOLDER']
-    if not os.path.exists(dl_folder):
-        os.mkdir(dl_folder)
-    app.run(debug=True, port=8000)
+@app.route('/send')
+def send_email():
+    mail_id = request.args.get('id')
+    print('Sending mail:', mail_id)
+    if email := EmailModel.query.get(mail_id):
+        msg = Message(
+            email.subject,
+            recipients=[email.email_addr],
+            html=render_template_string(template_str, title=email.subject, body=email.body)
+        )
+        mail.send(msg)
+        return {'ok': True}
+    return {'ok': False}
+
+with app.app_context():
+    db.create_all()
 
