@@ -1,4 +1,5 @@
 flask
+loguru
 gunicorn
 flask-wtf
 flask-mail

@@ -6,6 +6,7 @@ from flask import (
     render_template,
     render_template_string
 )
+from loguru import logger
 from datetime import datetime
 from flask_wtf import FlaskForm
 from flask_mail import Mail, Message
@@ -83,17 +84,21 @@ def index():
             email.subject = form.subject.data
             email.body = form.body.data
             email.due_date = form.timestamp.data
-            if email.save():
-                flash("Mail scheduled.")
-            else:
-                flash("Mail scheduling failed!")
+            if email.due_date < datetime.date(datetime.now()):
+                logger.warning('Invalid mail time!')
+                email.due_date = datetime.date(datetime.now())
+            message = "Mail scheduled."
+            if not email.save():
+                message = "Mail scheduling failed!"
+            flash(message)
+            logger.debug(message)
     return render_template('index.html', form=form)
 
 @app.route('/list')
 def list_mails():
     if api_key := request.headers.get('Api-key'):
         if api_key == app.config['SECRET_KEY']:
-            mails = EmailModel.query.all()
+            mails = EmailModel.query.filter_by(done=False).all()
             return {
                 'ok': True,
                 'scheduled': [
@@ -104,18 +109,19 @@ def list_mails():
 
 @app.route('/send')
 def send_email():
-    mail_id = request.args.get('id')
-    print('Sending mail:', mail_id)
-    if (email := EmailModel.query.get(mail_id)) and (not email.done):
-        msg = Message(
-            email.subject,
-            recipients=[email.email_addr],
-            html=render_template_string(template_str, title=email.subject, body=email.body)
-        )
-        mail.send(msg)
-        email.done = True
-        email.save()
-        return {'ok': True}
+    if api_key := request.headers.get('Api-key'):
+        if api_key == app.config['SECRET_KEY']:
+            mail_id = request.args.get('id')
+            if (email := EmailModel.query.get(mail_id)) and (not email.done):
+                msg = Message(
+                    email.subject,
+                    recipients=[email.email_addr],
+                    html=render_template_string(template_str, title=email.subject, body=email.body)
+                )
+                mail.send(msg)
+                email.done = True
+                email.save()
+                return {'ok': True}
     return {'ok': False}
 
 with app.app_context():
